@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohammad Daud — Systems &amp; Python Engineer</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            alabaster: '#F7F6F2',
+            paper: '#FFFFFF',
+            hairline: '#E4E2DC',
+            ink: '#111315',
+            inkMuted: '#4B5563',
+            emeraldDeep: '#0F5132',
+            emeraldSoft: '#E8F3EE',
+            copper: '#B45309',
+            copperSoft: '#FEF3C7',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Swiss-Editorial Warm Alabaster Base */
+    body {
+      background-color: #F7F6F2;
+      color: #111315;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Subtle Architectural Drafting Grid */
+    .swiss-grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(17, 19, 21, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(17, 19, 21, 0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* Crisp Studio Paper Bento Cards */
+    .bento-card {
+      background-color: #FFFFFF;
+      border: 1px solid #E4E2DC;
+      box-shadow: 0 2px 10px -4px rgba(17, 19, 21, 0.05);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-3px);
+      border-color: #0F5132;
+      box-shadow: 0 18px 34px -14px rgba(15, 81, 50, 0.14);
+    }
+
+    /* Precision Editorial Portrait Crop (Removes bottom-left bike handle cleanly) */
+    .studio-portrait {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 56% 15%;
+      transform: scale(1.13);
+      transform-origin: 56% 16%;
+      filter: contrast(1.04) saturate(1.04);
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+    }
+
+    .portrait-card:hover .studio-portrait {
+      transform: scale(1.16);
+      filter: contrast(1.06) saturate(1.06);
+    }
+
+    /* Custom Scrollbar for Live Mini-Shell */
+    .shell-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .shell-scroll::-webkit-scrollbar-track {
+      background: #0F1412;
+    }
+    .shell-scroll::-webkit-scrollbar-thumb {
+      background: #273730;
+      border-radius: 9999px;
+    }
+
+    /* Subtle Floating Micro-Badges */
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .float-badge-a {
+      animation: floatGentle 5s ease-in-out infinite;
+    }
+    .float-badge-b {
+      animation: floatGentle 6s ease-in-out 1.4s infinite;
+    }
+
+    /* Scroll Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media print {
+      header, #mobile-drawer, #mobile-backdrop, #toast-notification, #arch-modal, .no-print {
+        display: none !important;
+      }
+      body {
+        background: #FFFFFF !important;
+      }
+      .bento-card {
+        box-shadow: none !important;
+        border: 1px solid #CBD5E1 !important;
+      }
+    }
+  </style>
+</head>
+<body class="swiss-grid-bg antialiased selection:bg-[#0F5132] selection:text-white">
+
+  <!-- =========================================================
+       TOAST NOTIFICATION BANNER
+       ========================================================= -->
+  <div
+    id="toast-notification"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 bg-[#111315] text-white border border-[#0F5132] px-4 py-3 rounded-xl shadow-2xl text-xs sm:text-sm font-medium"
+  >
+    <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+    <span id="toast-text">Copied to clipboard</span>
+  </div>
+
+  <!-- =========================================================
+       MOBILE SLIDE-OVER NAVIGATION DRAWER
+       ========================================================= -->
+  <div
+    id="mobile-backdrop"
+    onclick="closeMobileMenu()"
+    class="fixed inset-0 bg-black/45 backdrop-blur-xs z-40 hidden opacity-0 transition-opacity duration-300"
+  ></div>
+
+  <aside
+    id="mobile-drawer"
+    aria-label="Mobile Menu"
+    class="fixed top-0 right-0 h-full w-72 bg-white border-l border-[#E4E2DC] z-50 translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between shadow-2xl"
+  >
+    <div>
+      <div class="flex items-center justify-between pb-5 border-b border-[#E4E2DC]">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-lg bg-[#0F5132] text-white font-display font-extrabold text-sm flex items-center justify-center">
+            MD
+          </span>
+          <span class="font-display font-bold text-sm text-[#111315]">MOHAMMAD DAUD</span>
+        </div>
+        <button
+          onclick="closeMobileMenu()"
+          aria-label="Close mobile menu"
+          class="w-8 h-8 rounded-lg bg-[#F7F6F2] hover:bg-[#E4E2DC] text-[#111315] flex items-center justify-center cursor-pointer"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <nav class="mt-6 flex flex-col space-y-1.5 text-sm font-medium">
+        <a href="#overview" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg text-[#111315] hover:bg-[#E8F3EE] hover:text-[#0F5132] transition">Overview</a>
+        <a href="#projects" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg text-[#111315] hover:bg-[#E8F3EE] hover:text-[#0F5132] transition">Projects</a>
+        <a href="#stack" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg text-[#111315] hover:bg-[#E8F3EE] hover:text-[#0F5132] transition">Stack</a>
+        <a href="#credentials" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg text-[#111315] hover:bg-[#E8F3EE] hover:text-[#0F5132] transition">Credentials</a>
+        <a href="#contact" onclick="closeMobileMenu()" class="px-3 py-2.5 rounded-lg text-[#111315] hover:bg-[#E8F3EE] hover:text-[#0F5132] transition">Contact</a>
+      </nav>
+    </div>
+
+    <div class="pt-5 border-t border-[#E4E2DC] space-y-3">
+      <button
+        onclick="closeMobileMenu(); window.print();"
+        class="w-full py-2.5 px-4 rounded-xl bg-[#0F5132] hover:bg-[#0b3d26] text-white text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+      >
+        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+        <span>Print / Save Resume PDF</span>
+      </button>
+      <p class="font-mono text-[11px] text-center text-[#4B5563]">MCA Candidate &bull; Python &amp; Systems</p>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+       1. TOP STICKY ARCHITECTURAL HEADER
+       ========================================================= -->
+  <header class="sticky top-0 z-30 bg-[#F7F6F2]/90 backdrop-blur-md border-b border-[#E4E2DC]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Left: Monogram Badge + Name + Open Status -->
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="#overview" class="flex items-center gap-2.5 shrink-0 group">
+          <div class="w-9 h-9 rounded-lg bg-[#0F5132] text-white font-display font-extrabold text-sm flex items-center justify-center tracking-tight shadow-xs group-hover:bg-[#111315] transition">
+            MD
+          </div>
+          <span class="font-display font-extrabold text-sm sm:text-base tracking-tight text-[#111315]">
+            MOHAMMAD DAUD
+          </span>
+        </a>
+
+        <div class="hidden xl:flex items-center gap-2 pl-3 border-l border-[#E4E2DC]">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#0F5132]"></span>
+          </span>
+          <span class="font-mono text-[11px] text-[#0F5132] font-medium">
+            Open to Software &amp; Python Internships
+          </span>
+        </div>
+      </div>
+
+      <!-- Center: Clean Architectural Navigation Links -->
+      <nav aria-label="Primary Navigation" class="hidden md:flex items-center gap-6 text-xs font-semibold text-[#4B5563]">
+        <a href="#overview" class="hover:text-[#0F5132] transition">Overview</a>
+        <a href="#projects" class="hover:text-[#0F5132] transition">Projects</a>
+        <a href="#stack" class="hover:text-[#0F5132] transition">Stack</a>
+        <a href="#credentials" class="hover:text-[#0F5132] transition">Credentials</a>
+        <a href="#contact" class="hover:text-[#0F5132] transition">Contact</a>
+      </nav>
+
+      <!-- Right: Live IST Time + Official LinkedIn / GitHub Brand Logos -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E4E2DC] font-mono text-[11px] text-[#111315]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#0F5132]"></span>
+          <span id="live-ist-badge">IST &bull; --:--</span>
+        </div>
+
+        <a
+          href="https://www.linkedin.com/in/mohammad-daud-89064042a"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn Profile"
+          title="LinkedIn — Mohammad Daud"
+          class="group h-9 px-2.5 sm:px-3 rounded-lg bg-white hover:bg-[#0A66C2] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#0A66C2] flex items-center gap-1.5 transition shadow-2xs"
+        >
+          <svg class="w-4 h-4 fill-[#0A66C2] group-hover:fill-white transition shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          <span class="hidden xl:inline font-mono text-[11px] font-semibold">LinkedIn</span>
+        </a>
+
+        <a
+          href="https://github.com/md-daud"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub Profile"
+          title="GitHub — @md-daud"
+          class="group h-9 px-2.5 sm:px-3 rounded-lg bg-white hover:bg-[#181717] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#181717] flex items-center gap-1.5 transition shadow-2xs"
+        >
+          <svg class="w-4 h-4 fill-[#181717] group-hover:fill-white transition shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+          <span class="hidden xl:inline font-mono text-[11px] font-semibold">GitHub</span>
+        </a>
+
+        <button
+          onclick="openMobileMenu()"
+          aria-label="Open menu"
+          class="md:hidden w-9 h-9 rounded-lg bg-white border border-[#E4E2DC] text-[#111315] flex items-center justify-center cursor-pointer"
+        >
+          <i data-lucide="menu" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- =========================================================
+       2. SPLIT-SCREEN EDITORIAL HERO + INTERACTIVE SHELL STRIP
+       ========================================================= -->
+  <section id="overview" class="pt-10 pb-20 sm:pt-14 sm:pb-24 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+      
+      <!-- LEFT COLUMN (7 Cols): Swiss-Editorial Typography, CTAs & Live Mini-Shell -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Primary CTA Buttons with Official LinkedIn & GitHub Logos -->
+        <div class="flex flex-wrap items-center gap-3 pt-1">
+          <a
+            href="#projects"
+            class="px-5 py-3 rounded-xl bg-[#0F5132] hover:bg-[#0b3d26] text-white text-xs sm:text-sm font-semibold shadow-sm flex items-center gap-2 transition hover:-translate-y-0.5"
+          >
+            <span>Explore Engineering Work</span>
+            <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+          </a>
+
+          <a
+            href="https://www.linkedin.com/in/mohammad-daud-89064042a"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group px-4 py-3 rounded-xl bg-white hover:bg-[#0A66C2] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#0A66C2] text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-2xs transition hover:-translate-y-0.5"
+          >
+            <svg class="w-4 h-4 fill-[#0A66C2] group-hover:fill-white transition shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            <span>LinkedIn</span>
+          </a>
+
+          <a
+            href="https://github.com/md-daud"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group px-4 py-3 rounded-xl bg-white hover:bg-[#181717] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#181717] text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-2xs transition hover:-translate-y-0.5"
+          >
+            <svg class="w-4 h-4 fill-[#181717] group-hover:fill-white transition shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+            </svg>
+            <span>GitHub</span>
+          </a>
+
+          <button
+            onclick="copyToClipboard('daud.knj@gmail.com', 'Email copied: daud.knj@gmail.com')"
+            class="px-4 py-3 rounded-xl bg-white hover:bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] hover:border-[#0F5132] text-xs sm:text-sm font-mono font-medium flex items-center gap-2 transition hover:-translate-y-0.5 cursor-pointer"
+          >
+            <i data-lucide="copy" class="w-3.5 h-3.5 text-[#0F5132]"></i>
+            <span>daud.knj@gmail.com</span>
+          </button>
+        </div>
+
+        <!-- Direct Social Links Row -->
+        <div class="flex flex-wrap items-center gap-5 text-xs font-mono text-[#4B5563] pt-1">
+          <a
+            href="https://www.linkedin.com/in/mohammad-daud-89064042a"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 hover:text-[#0F5132] transition"
+          >
+            <i data-lucide="external-link" class="w-3.5 h-3.5 text-[#0F5132]"></i>
+            <span>linkedin.com/in/mohammad-daud-89064042a</span>
+          </a>
+
+          <a
+            href="https://github.com/md-daud"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 hover:text-[#0F5132] transition"
+          >
+            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-[#B45309]"></i>
+            <span>github.com/md-daud</span>
+          </a>
+        </div>
+
+        <!-- INTERACTIVE LIVE MINI-SHELL ("daud@linux-shell:~$") -->
+        <div class="pt-3">
+          <div class="rounded-2xl bg-[#111614] border border-[#24302B] shadow-xl overflow-hidden">
+            
+            <!-- Terminal Header & Quick-Command Chips -->
+            <div class="px-4 py-2.5 bg-[#18201D] border-b border-[#24302B] flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <span class="ml-1.5 font-mono text-[11px] text-emerald-300/90 font-medium">
+                  daud@linux-shell:~$
+                </span>
+              </div>
+
+              <!-- Quick Command Chips -->
+              <div class="flex flex-wrap items-center gap-1 font-mono text-[10px]">
+                <button onclick="runShellCommand('help')" class="px-2 py-0.5 rounded bg-[#222E29] hover:bg-[#0F5132] text-emerald-200 transition cursor-pointer">help</button>
+                <button onclick="runShellCommand('whoami')" class="px-2 py-0.5 rounded bg-[#222E29] hover:bg-[#0F5132] text-emerald-200 transition cursor-pointer">whoami</button>
+                <button onclick="runShellCommand('projects')" class="px-2 py-0.5 rounded bg-[#222E29] hover:bg-[#0F5132] text-emerald-200 transition cursor-pointer">projects</button>
+                <button onclick="runShellCommand('skills')" class="px-2 py-0.5 rounded bg-[#222E29] hover:bg-[#0F5132] text-emerald-200 transition cursor-pointer">skills</button>
+                <button onclick="runShellCommand('cert')" class="px-2 py-0.5 rounded bg-[#222E29] hover:bg-[#0F5132] text-emerald-200 transition cursor-pointer">cert</button>
+                <button onclick="runShellCommand('clear')" class="px-2 py-0.5 rounded bg-[#2A201D] hover:bg-[#B45309] text-amber-200 transition cursor-pointer">clear</button>
+              </div>
+            </div>
+
+            <!-- Terminal Scrollback Output -->
+            <div
+              id="shell-output"
+              onclick="document.getElementById('shell-input').focus()"
+              class="shell-scroll p-4 h-44 overflow-y-auto font-mono text-xs leading-relaxed text-slate-200 space-y-1.5 cursor-text"
+            >
+              <p class="text-emerald-400">Custom POSIX Shell Simulator v2.6 — Type <span class="text-amber-300 font-semibold">help</span> or click any command chip above.</p>
+            </div>
+
+            <!-- Terminal Interactive Input Prompt -->
+            <form onsubmit="handleShellSubmit(event)" class="px-4 py-2.5 bg-[#0D110F] border-t border-[#24302B] flex items-center gap-2 font-mono text-xs">
+              <span class="text-emerald-400 font-semibold shrink-0">daud@linux-shell:~$</span>
+              <input
+                id="shell-input"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Enter command (help, whoami, projects, skills, cert, clear)..."
+                class="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none"
+              />
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN (5 Cols): Studio-Framed Portrait Card + Micro-Telemetry -->
+      <div class="lg:col-span-5 flex justify-center lg:justify-end pt-2 lg:pt-4">
+        <div class="relative w-full max-w-[390px] sm:max-w-[420px]">
+          
+          <!-- Architectural Offset Backdrop Accent -->
+          <div aria-hidden="true" class="absolute -inset-2.5 rounded-3xl bg-gradient-to-br from-[#0F5132]/15 via-transparent to-[#B45309]/15 -rotate-1 pointer-events-none"></div>
+
+          <!-- Studio Paper Frame -->
+          <div class="portrait-card relative rounded-3xl bg-white p-3.5 border border-[#E4E2DC] shadow-xl">
+            
+            <!-- Frame Header Strip -->
+            <div class="flex items-center justify-between px-1 pb-2.5 font-mono text-[10px] text-[#4B5563]">
+              <span>FIG 01. STUDIO PORTRAIT</span>
+              <span class="text-[#0F5132] font-semibold">SOFTWARE &amp; SYSTEMS</span>
+            </div>
+
+            <!-- Aspect 4:5 Cropped Studio Viewport -->
+            <div class="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-[#181B20] border border-[#E4E2DC]">
+              <img
+                id="portrait-img"
+                src="1000055612_3.jpg"
+                data-fallback-idx="0"
+                onerror="handleImageFallback(this)"
+                alt="Mohammad Daud — MCA Candidate & Python Developer"
+                class="studio-portrait select-none"
+              />
+
+              <!-- Subtle Bottom Studio Gradient Fade -->
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#111315]/85 via-[#111315]/10 to-transparent"></div>
+
+              <!-- Bottom Overlay Caption + Hover Local Upload Button -->
+              <div class="absolute bottom-3.5 left-4 right-4 flex items-end justify-between gap-2">
+                <div>
+                  <p class="font-display text-sm font-bold text-white leading-tight">Mohammad Daud</p>
+                  <p class="font-mono text-[10px] text-emerald-300 mt-0.5">Python &bull; C/C++ &bull; Linux Systems</p>
+                </div>
+
+                <!-- Hover Upload Local Photo Button -->
+                <label
+                  for="local-photo-input"
+                  title="Preview your local photo immediately"
+                  class="no-print cursor-pointer px-2.5 py-1.5 rounded-lg bg-white/90 hover:bg-[#0F5132] text-[#111315] hover:text-white font-mono text-[10px] font-semibold flex items-center gap-1.5 shadow-md transition opacity-85 hover:opacity-100"
+                >
+                  <i data-lucide="upload" class="w-3 h-3"></i>
+                  <span>Upload Local Photo</span>
+                  <input id="local-photo-input" type="file" accept="image/*" class="hidden" onchange="previewLocalPhoto(event)" />
+                </label>
+              </div>
+            </div>
+
+            <!-- Frame Footer Telemetry -->
+            <div class="pt-3 px-1 flex items-center justify-between font-mono text-[10px] text-[#4B5563]">
+              <span>ID: MD-2026-PORTFOLIO</span>
+              <span class="text-[#B45309] font-semibold">VERIFIED PROFILE</span>
+            </div>
+          </div>
+
+          <!-- Floating Micro-Telemetry Badge 1: LeetCode -->
+          <div class="float-badge-a absolute -top-4 -left-3 sm:-left-6 z-20 px-3.5 py-2.5 rounded-2xl bg-white border border-[#E4E2DC] shadow-lg flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#FEF3C7] text-[#B45309] font-mono text-xs font-bold flex items-center justify-center">
+              40+
+            </div>
+            <div>
+              <p class="font-display text-xs font-bold text-[#111315] leading-none">LeetCode Solved</p>
+              <p class="font-mono text-[10px] text-[#4B5563] mt-1">DSA &amp; Contests</p>
+            </div>
+          </div>
+
+          <!-- Floating Micro-Telemetry Badge 2: MCA Integral Univ -->
+          <div class="float-badge-b absolute -bottom-4 -right-2 sm:-right-5 z-20 px-3.5 py-2.5 rounded-2xl bg-white border border-[#E4E2DC] shadow-lg flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#E8F3EE] text-[#0F5132] flex items-center justify-center">
+              <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <p class="font-display text-xs font-bold text-[#111315] leading-none">MCA '28 &bull; Integral Univ.</p>
+              <p class="font-mono text-[10px] text-[#4B5563] mt-1">BCA Graduate '25</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       3. ENGINEERING PROJECTS SECTION (Filterable Bento + Modal)
+       ========================================================= -->
+  <section id="projects" class="reveal py-20 sm:py-24 px-4 sm:px-8 border-t border-[#E4E2DC] bg-white/60">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Section Header + Filter Tabs -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#0F5132] mb-2">
+            01 // SYSTEMS &amp; SOFTWARE ARTIFACTS
+          </p>
+          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-[#111315] tracking-tight">
+            Engineering Projects
+          </h2>
+          <p class="text-sm sm:text-base text-[#4B5563] mt-2 max-w-2xl">
+            Hands-on applications built from scratch—spanning local LLM inference, Unix process management, and object-oriented Python design.
+          </p>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div class="flex flex-wrap items-center gap-2 font-mono text-xs" role="group" aria-label="Filter projects">
+          <button
+            onclick="filterProjectCards('all')"
+            data-cat="all"
+            class="proj-tab px-3.5 py-2 rounded-xl bg-[#0F5132] text-white font-semibold transition cursor-pointer"
+          >
+            All Systems
+          </button>
+          <button
+            onclick="filterProjectCards('ai-web')"
+            data-cat="ai-web"
+            class="proj-tab px-3.5 py-2 rounded-xl bg-white text-[#111315] border border-[#E4E2DC] hover:border-[#0F5132] transition cursor-pointer"
+          >
+            AI &amp; Web
+          </button>
+          <button
+            onclick="filterProjectCards('systems-c')"
+            data-cat="systems-c"
+            class="proj-tab px-3.5 py-2 rounded-xl bg-white text-[#111315] border border-[#E4E2DC] hover:border-[#0F5132] transition cursor-pointer"
+          >
+            Systems / C
+          </button>
+          <button
+            onclick="filterProjectCards('python-oop')"
+            data-cat="python-oop"
+            class="proj-tab px-3.5 py-2 rounded-xl bg-white text-[#111315] border border-[#E4E2DC] hover:border-[#0F5132] transition cursor-pointer"
+          >
+            Python OOP
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Project Bento Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        
+        <!-- Project 1: DaudGPT — Local AI Chatbot -->
+        <article data-category="ai-web" class="project-bento-card bento-card rounded-2xl p-6 sm:p-7 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-[11px] font-semibold px-2.5 py-1 rounded-md bg-[#E8F3EE] text-[#0F5132]">
+                AI &amp; WEB
+              </span>
+              <a
+                href="https://github.com/md-daud"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="View on GitHub"
+                class="text-[#4B5563] hover:text-[#111315] transition"
+              >
+                <i data-lucide="github" class="w-4 h-4"></i>
+              </a>
+            </div>
+
+            <h3 class="font-display text-xl font-bold text-[#111315] mb-2.5">
+              DaudGPT — Local AI Chatbot
+            </h3>
+            <p class="text-sm text-[#4B5563] leading-relaxed mb-4">
+              ChatGPT-style conversational web app with a responsive UI, persistent chat history, and new-chat controls. Built a <span class="text-[#111315] font-semibold">FastAPI</span> backend integrated with <span class="text-[#111315] font-semibold">Ollama</span> and <span class="text-[#111315] font-semibold">Qwen2.5-Coder</span> for private on-device local LLM inference.
+            </p>
+
+            <ul class="space-y-1.5 text-xs text-[#4B5563] mb-5">
+              <li class="flex items-start gap-2">
+                <span class="text-[#0F5132] font-bold">&bull;</span>
+                <span>Zero external cloud API calls—conversations stay on user hardware</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-[#0F5132] font-bold">&bull;</span>
+                <span>Session state management &amp; clean HTML/CSS/JS interface</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-4 border-t border-[#E4E2DC] space-y-4">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">FastAPI</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">Ollama</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">Qwen2.5-Coder</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#4B5563] border border-[#E4E2DC]">HTML/CSS/JS</span>
+            </div>
+
+            <button
+              onclick="openArchitectureModal('daudgpt')"
+              class="w-full py-2.5 px-4 rounded-xl bg-[#F7F6F2] hover:bg-[#0F5132] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#0F5132] font-mono text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+            >
+              <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+              <span>Inspect Architecture</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Project 2: Custom Linux Shell -->
+        <article data-category="systems-c" class="project-bento-card bento-card rounded-2xl p-6 sm:p-7 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-[11px] font-semibold px-2.5 py-1 rounded-md bg-[#FEF3C7] text-[#B45309]">
+                SYSTEMS / C
+              </span>
+              <a
+                href="https://github.com/md-daud"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="View on GitHub"
+                class="text-[#4B5563] hover:text-[#111315] transition"
+              >
+                <i data-lucide="github" class="w-4 h-4"></i>
+              </a>
+            </div>
+
+            <h3 class="font-display text-xl font-bold text-[#111315] mb-2.5">
+              Custom Linux Shell
+            </h3>
+            <p class="text-sm text-[#4B5563] leading-relaxed mb-4">
+              Command-line shell built from scratch in C implementing command parsing and process lifecycle management via <code class="font-mono text-xs bg-[#F7F6F2] px-1.5 py-0.5 rounded border border-[#E4E2DC] text-[#111315]">fork()</code> and <code class="font-mono text-xs bg-[#F7F6F2] px-1.5 py-0.5 rounded border border-[#E4E2DC] text-[#111315]">exec()</code>, alongside stdin/stdout redirection, command history, and debugging diagnostics.
+            </p>
+
+            <ul class="space-y-1.5 text-xs text-[#4B5563] mb-5">
+              <li class="flex items-start gap-2">
+                <span class="text-[#B45309] font-bold">&bull;</span>
+                <span>POSIX child process spawning, synchronization &amp; descriptor routing</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-[#B45309] font-bold">&bull;</span>
+                <span>Interactive command history buffer &amp; kernel-level trace logging</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-4 border-t border-[#E4E2DC] space-y-4">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">C</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">POSIX syscalls</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">fork() / exec()</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#4B5563] border border-[#E4E2DC]">I/O Redirection</span>
+            </div>
+
+            <button
+              onclick="openArchitectureModal('shell')"
+              class="w-full py-2.5 px-4 rounded-xl bg-[#F7F6F2] hover:bg-[#0F5132] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#0F5132] font-mono text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+            >
+              <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
+              <span>Inspect Architecture</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Project 3: Python OOP 2D Arcade Game -->
+        <article data-category="python-oop" class="project-bento-card bento-card rounded-2xl p-6 sm:p-7 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-[11px] font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-[#111315] border border-[#E4E2DC]">
+                PYTHON OOP
+              </span>
+              <a
+                href="https://github.com/md-daud"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="View on GitHub"
+                class="text-[#4B5563] hover:text-[#111315] transition"
+              >
+                <i data-lucide="github" class="w-4 h-4"></i>
+              </a>
+            </div>
+
+            <h3 class="font-display text-xl font-bold text-[#111315] mb-2.5">
+              Python OOP 2D Arcade Game
+            </h3>
+            <p class="text-sm text-[#4B5563] leading-relaxed mb-4">
+              Modular 2D arcade game structured with encapsulated entity classes, clean state management, deterministic game-loop updates, and bounding-box collision detection built around strict Object-Oriented Programming principles.
+            </p>
+
+            <ul class="space-y-1.5 text-xs text-[#4B5563] mb-5">
+              <li class="flex items-start gap-2">
+                <span class="text-[#0F5132] font-bold">&bull;</span>
+                <span>Decoupled player, enemy, and scoring class hierarchies</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-[#0F5132] font-bold">&bull;</span>
+                <span>Deterministic tick updates &amp; real-time hitbox evaluation</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-4 border-t border-[#E4E2DC] space-y-4">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">Python</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">OOP Architecture</span>
+              <span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#4B5563] border border-[#E4E2DC]">Collision Physics</span>
+            </div>
+
+            <button
+              onclick="openArchitectureModal('game')"
+              class="w-full py-2.5 px-4 rounded-xl bg-[#F7F6F2] hover:bg-[#0F5132] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#0F5132] font-mono text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
+            >
+              <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+              <span>Inspect Architecture</span>
+            </button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       4. TECHNICAL MATRIX (4-PILLAR BENTO GRID)
+       ========================================================= -->
+  <section id="stack" class="reveal py-20 sm:py-24 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#0F5132] mb-2">
+        02 // CORE COMPETENCIES
+      </p>
+      <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-[#111315] tracking-tight">
+        Technical Matrix
+      </h2>
+      <p class="text-sm sm:text-base text-[#4B5563] mt-2 max-w-2xl">
+        Structured engineering capabilities across systems programming, relational analytics, Linux operations, and network security.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Pillar 1: Languages & Core CS -->
+      <div class="bento-card rounded-2xl p-6 sm:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#E8F3EE] text-[#0F5132] flex items-center justify-center">
+              <i data-lucide="code-2" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-[#111315]">Languages &amp; Core CS</h3>
+          </div>
+          <span class="font-mono text-[11px] text-[#4B5563]">01</span>
+        </div>
+        <div class="flex flex-wrap gap-2 font-mono text-xs">
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Python</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">C</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">C++</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#E8F3EE] text-[#0F5132] font-semibold">Data Structures &amp; Algorithms (DSA)</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#E8F3EE] text-[#0F5132] font-semibold">Object-Oriented Programming (OOP)</span>
+        </div>
+      </div>
+
+      <!-- Pillar 2: Databases & Analytics -->
+      <div class="bento-card rounded-2xl p-6 sm:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#FEF3C7] text-[#B45309] flex items-center justify-center">
+              <i data-lucide="database" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-[#111315]">Databases &amp; Analytics</h3>
+          </div>
+          <span class="font-mono text-[11px] text-[#4B5563]">02</span>
+        </div>
+        <div class="flex flex-wrap gap-2 font-mono text-xs">
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">SQL</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">MySQL</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">PostgreSQL</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#FEF3C7] text-[#B45309] font-semibold">Joins, Aggregations &amp; Window Functions</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Microsoft Power BI</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#4B5563] border border-[#E4E2DC]">Data Visualization</span>
+        </div>
+      </div>
+
+      <!-- Pillar 3: Systems, DevOps & Networking -->
+      <div class="bento-card rounded-2xl p-6 sm:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#E8F3EE] text-[#0F5132] flex items-center justify-center">
+              <i data-lucide="server" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-[#111315]">Systems, DevOps &amp; Networking</h3>
+          </div>
+          <span class="font-mono text-[11px] text-[#4B5563]">03</span>
+        </div>
+        <div class="flex flex-wrap gap-2 font-mono text-xs">
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Linux Administration</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Bash Scripting</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">Command-Line Tools</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Git &amp; GitHub</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Docker Fundamentals</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#E8F3EE] text-[#0F5132] font-semibold">TCP/IP &bull; DNS &bull; Routing &amp; Switching (CCNA Track)</span>
+        </div>
+      </div>
+
+      <!-- Pillar 4: Security & Focus Areas -->
+      <div class="bento-card rounded-2xl p-6 sm:p-7">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#FEF3C7] text-[#B45309] flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-[#111315]">Security &amp; Focus Areas</h3>
+          </div>
+          <span class="font-mono text-[11px] text-[#4B5563]">04</span>
+        </div>
+        <div class="flex flex-wrap gap-2 font-mono text-xs">
+          <span class="px-3 py-1.5 rounded-lg bg-[#FEF3C7] text-[#B45309] font-semibold">Cybersecurity Fundamentals</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Local LLM Inference</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC] font-medium">Practical Problem Solving</span>
+          <span class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] text-[#4B5563] border border-[#E4E2DC]">Software Development</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       5. VERIFIED EDUCATION, ACHIEVEMENTS & CERTIFICATION TIMELINE
+       ========================================================= -->
+  <section id="credentials" class="reveal py-20 sm:py-24 px-4 sm:px-8 border-t border-[#E4E2DC] bg-white/60">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-12">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#0F5132] mb-2">
+          03 // ACADEMIC &amp; VERIFIED TRACK
+        </p>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-[#111315] tracking-tight">
+          Education &amp; Verified Credentials
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left (6 Cols): Academic Degrees Timeline -->
+        <div class="lg:col-span-6 bento-card rounded-2xl p-6 sm:p-8">
+          <div class="flex items-center gap-3 mb-7">
+            <div class="w-10 h-10 rounded-xl bg-[#E8F3EE] text-[#0F5132] flex items-center justify-center">
+              <i data-lucide="book-open" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display text-xl font-bold text-[#111315]">Academic Qualifications</h3>
+          </div>
+
+          <div class="space-y-8 border-l-2 border-[#0F5132]/30 pl-6 ml-2">
+            <!-- MCA -->
+            <div class="relative">
+              <span class="w-3.5 h-3.5 rounded-full bg-[#0F5132] absolute -left-[32px] top-1 ring-4 ring-white"></span>
+              <span class="font-mono text-xs font-semibold text-[#0F5132] uppercase tracking-wider">
+                Expected Graduation: 2028
+              </span>
+              <h4 class="font-display text-lg font-bold text-[#111315] mt-1">
+                Master of Computer Applications (MCA)
+              </h4>
+              <p class="text-sm text-[#4B5563] mt-0.5">
+                Integral University, Lucknow, Uttar Pradesh
+              </p>
+            </div>
+
+            <!-- BCA -->
+            <div class="relative">
+              <span class="w-3.5 h-3.5 rounded-full bg-[#B45309] absolute -left-[32px] top-1 ring-4 ring-white"></span>
+              <span class="font-mono text-xs font-semibold text-[#B45309] uppercase tracking-wider">
+                Graduated: 2025
+              </span>
+              <h4 class="font-display text-lg font-bold text-[#111315] mt-1">
+                Bachelor of Computer Applications (BCA)
+              </h4>
+              <p class="text-sm text-[#4B5563] mt-0.5">
+                Indira Gandhi National Open University (IGNOU)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right (6 Cols): Verified Workshop Certificate & Algorithmic Practice -->
+        <div class="lg:col-span-6 space-y-6">
+          
+          <!-- Certification Card with One-Click Credential ID Copy -->
+          <div class="bento-card rounded-2xl p-6 sm:p-7">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <span class="font-mono text-[11px] font-semibold px-2.5 py-1 rounded-md bg-[#E8F3EE] text-[#0F5132]">
+                WORKSHOP CERTIFICATION
+              </span>
+              <span class="font-mono text-xs text-[#4B5563]">7 October 2026</span>
+            </div>
+
+            <h3 class="font-display text-lg sm:text-xl font-bold text-[#111315]">
+              Generative AI &amp; Agentic AI Workshop
+            </h3>
+            <p class="text-sm text-[#4B5563] mt-1">
+              Softpro India &bull; Integral University, Lucknow
+            </p>
+
+            <div class="mt-4 pt-4 border-t border-[#E4E2DC] flex flex-wrap items-center justify-between gap-3">
+              <div class="font-mono text-xs">
+                <span class="text-[#4B5563]">Certificate ID: </span>
+                <span class="text-[#111315] font-bold">SP-CERT-2026-00880</span>
+              </div>
+
+              <button
+                onclick="copyToClipboard('SP-CERT-2026-00880', 'Credential ID copied: SP-CERT-2026-00880')"
+                class="px-3 py-1.5 rounded-lg bg-[#F7F6F2] hover:bg-[#0F5132] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#0F5132] font-mono text-[11px] font-semibold flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span>Copy Credential ID</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Algorithmic Practice Card -->
+          <div class="bento-card rounded-2xl p-6 sm:p-7">
+            <div class="flex items-center justify-between gap-3 mb-2.5">
+              <h3 class="font-display text-lg sm:text-xl font-bold text-[#111315]">
+                Algorithmic Practice &amp; Contests
+              </h3>
+              <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-[#FEF3C7] text-[#B45309]">
+                40+ LEETCODE
+              </span>
+            </div>
+            <p class="text-sm text-[#4B5563] leading-relaxed">
+              Solved <span class="text-[#111315] font-semibold">40+ problems on LeetCode</span> practicing data structures, algorithms, and systematic edge-case decomposition, alongside active coding contest participation.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       6. DIRECT CONTACT & RECRUITER FOOTER
+       ========================================================= -->
+  <section id="contact" class="reveal py-20 sm:py-24 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#0F5132] mb-2">
+        04 // DIRECT RECRUITER CHANNELS
+      </p>
+      <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-[#111315] tracking-tight">
+        Get In Touch
+      </h2>
+      <p class="text-sm sm:text-base text-[#4B5563] mt-2 max-w-2xl">
+        Available for software development internships, Python engineering roles, and collaborative technical projects.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left (5 Cols): Direct Contact Cards -->
+      <div class="lg:col-span-5 space-y-4">
+        
+        <!-- Primary Email Card -->
+        <div class="bento-card rounded-2xl p-6 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-[#E8F3EE] text-[#0F5132] flex items-center justify-center shrink-0">
+              <i data-lucide="mail" class="w-5 h-5"></i>
+            </div>
+            <a href="mailto:daud.knj@gmail.com" class="min-w-0">
+              <p class="font-mono text-[11px] text-[#4B5563] uppercase">Primary Email</p>
+              <p class="text-sm sm:text-base font-bold text-[#111315] truncate mt-0.5">daud.knj@gmail.com</p>
+            </a>
+          </div>
+          <button
+            onclick="copyToClipboard('daud.knj@gmail.com', 'Email copied: daud.knj@gmail.com')"
+            class="px-3.5 py-2 rounded-xl bg-[#F7F6F2] hover:bg-[#0F5132] text-[#111315] hover:text-white border border-[#E4E2DC] hover:border-[#0F5132] font-mono text-xs font-semibold transition shrink-0 cursor-pointer"
+          >
+            Copy
+          </button>
+        </div>
+
+        <!-- Social Profiles Quick Links with Official Brand Logos -->
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <a
+            href="https://www.linkedin.com/in/mohammad-daud-89064042a"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group bento-card rounded-xl p-3.5 flex items-center justify-center gap-2 text-xs font-bold text-[#111315] hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2]"
+          >
+            <svg class="w-4 h-4 fill-[#0A66C2] group-hover:fill-white transition shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            <span>LinkedIn Profile</span>
+          </a>
+          <a
+            href="https://github.com/md-daud"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group bento-card rounded-xl p-3.5 flex items-center justify-center gap-2 text-xs font-bold text-[#111315] hover:bg-[#181717] hover:text-white hover:border-[#181717]"
+          >
+            <svg class="w-4 h-4 fill-[#181717] group-hover:fill-white transition shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+            </svg>
+            <span>GitHub (@md-daud)</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Right (7 Cols): Functional Quick-Message Mailto Composer -->
+      <div class="lg:col-span-7 bento-card rounded-2xl p-6 sm:p-8 no-print">
+        <h3 class="font-display text-lg sm:text-xl font-bold text-[#111315] mb-1">
+          Quick Message Composer
+        </h3>
+        <p class="text-xs sm:text-sm text-[#4B5563] mb-5">
+          Compose a note below to launch a pre-filled email directly to <span class="font-mono font-semibold text-[#0F5132]">daud.knj@gmail.com</span>.
+        </p>
+
+        <form onsubmit="submitQuickMail(event)" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="sender-name" class="block font-mono text-[11px] font-semibold text-[#4B5563] uppercase mb-1.5">
+                Your Name
+              </label>
+              <input
+                id="sender-name"
+                type="text"
+                required
+                placeholder="Recruiter / Engineering Lead"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-[#F7F6F2] border border-[#E4E2DC] text-sm text-[#111315] placeholder-slate-400 focus:outline-none focus:border-[#0F5132] focus:bg-white transition"
+              />
+            </div>
+            <div>
+              <label for="sender-subject" class="block font-mono text-[11px] font-semibold text-[#4B5563] uppercase mb-1.5">
+                Subject
+              </label>
+              <input
+                id="sender-subject"
+                type="text"
+                required
+                placeholder="Software Internship / Python Role"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-[#F7F6F2] border border-[#E4E2DC] text-sm text-[#111315] placeholder-slate-400 focus:outline-none focus:border-[#0F5132] focus:bg-white transition"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="sender-body" class="block font-mono text-[11px] font-semibold text-[#4B5563] uppercase mb-1.5">
+              Message
+            </label>
+            <textarea
+              id="sender-body"
+              rows="4"
+              required
+              placeholder="Hi Mohammad, I reviewed your portfolio and would love to discuss an opportunity..."
+              class="w-full px-3.5 py-2.5 rounded-xl bg-[#F7F6F2] border border-[#E4E2DC] text-sm text-[#111315] placeholder-slate-400 focus:outline-none focus:border-[#0F5132] focus:bg-white transition"
+            ></textarea>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <button
+              type="submit"
+              class="px-5 py-2.5 rounded-xl bg-[#0F5132] hover:bg-[#0b3d26] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-xs transition cursor-pointer"
+            >
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Open Pre-Filled Email</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="copyMailDraft()"
+              class="px-4 py-2.5 rounded-xl bg-[#F7F6F2] hover:bg-[#E4E2DC] text-[#111315] border border-[#E4E2DC] text-xs sm:text-sm font-medium transition cursor-pointer"
+            >
+              Copy Draft Text
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="border-t border-[#E4E2DC] bg-white py-8 px-4 sm:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#4B5563]">
+      <div class="flex items-center gap-2.5">
+        <span class="w-6 h-6 rounded bg-[#0F5132] text-white font-display font-bold text-[11px] flex items-center justify-center">MD</span>
+        <span class="font-mono">&copy; 2026 MOHAMMAD DAUD &bull; Systems &amp; Python Engineer</span>
+      </div>
+      <div class="flex items-center gap-5 font-mono">
+        <a href="https://www.linkedin.com/in/mohammad-daud-89064042a" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-[#0A66C2] transition">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+        <a href="https://github.com/md-daud" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-[#181717] transition">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="mailto:daud.knj@gmail.com" class="hover:text-[#0F5132] transition">daud.knj@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================
+       ARCHITECTURE INSPECTOR MODAL
+       ========================================================= -->
+  <div
+    id="arch-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-proj-title"
+    onclick="if(event.target === this) closeArchitectureModal()"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/55 backdrop-blur-xs"
+  >
+    <div class="w-full max-w-2xl rounded-2xl bg-white border border-[#E4E2DC] shadow-2xl overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 bg-[#F7F6F2] border-b border-[#E4E2DC] flex items-center justify-between">
+        <div>
+          <span id="modal-proj-category" class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0F5132]">
+            SYSTEM ARCHITECTURE
+          </span>
+          <h3 id="modal-proj-title" class="font-display text-lg sm:text-xl font-extrabold text-[#111315] mt-0.5">
+            Project Architecture
+          </h3>
+        </div>
+        <button
+          onclick="closeArchitectureModal()"
+          aria-label="Close modal"
+          class="w-9 h-9 rounded-lg bg-white hover:bg-[#E4E2DC] border border-[#E4E2DC] text-[#111315] flex items-center justify-center cursor-pointer"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+        <div>
+          <p class="font-mono text-[11px] font-semibold text-[#4B5563] uppercase mb-2">
+            System Flow Diagram
+          </p>
+          <pre id="modal-proj-diagram" class="p-4 rounded-xl bg-[#111614] text-emerald-300 font-mono text-xs overflow-x-auto leading-relaxed"></pre>
+        </div>
+
+        <div>
+          <p class="font-mono text-[11px] font-semibold text-[#4B5563] uppercase mb-2">
+            Key Engineering Decisions
+          </p>
+          <ul id="modal-proj-decisions" class="space-y-2 text-xs sm:text-sm text-[#111315] list-disc pl-5"></ul>
+        </div>
+
+        <div class="pt-4 border-t border-[#E4E2DC] flex flex-wrap items-center justify-between gap-3">
+          <div id="modal-proj-stack" class="flex flex-wrap gap-1.5 font-mono text-[11px]"></div>
+          <a
+            href="https://github.com/md-daud"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-4 py-2 rounded-lg bg-[#0F5132] hover:bg-[#0b3d26] text-white font-mono text-xs font-semibold flex items-center gap-1.5 transition"
+          >
+            <span>Source on GitHub</span>
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================================================
+       JAVASCRIPT: Lucide Init, Live Shell, Filter, Modal, Clock
+       ========================================================= -->
+  <script>
+    // Initialize Lucide Icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
+    // 1. Live IST Clock in Sticky Architectural Header
+    function updateISTHeaderClock() {
+      const el = document.getElementById('live-ist-badge');
+      if (!el) return;
+      try {
+        const now = new Date();
+        const formatted = now.toLocaleTimeString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+        el.textContent = `${formatted.toUpperCase()} IST`;
+      } catch (err) {
+        el.textContent = 'IST';
+      }
+    }
+    updateISTHeaderClock();
+    setInterval(updateISTHeaderClock, 15000);
+
+    // 2. Portrait Image Fallback Chain & Local Upload Preview
+    const portraitFallbacks = [
+      'watermarked_img_276102238517159020_2.png',
+      'watermarked_img_276102238517159020.png',
+      '1000055612_2.jpg',
+      'profile.png',
+      'https://placehold.co/600x750/181B20/E8F3EE?text=Mohammad+Daud'
+    ];
+
+    function handleImageFallback(imgEl) {
+      if (!imgEl) return;
+      const idx = parseInt(imgEl.getAttribute('data-fallback-idx') || '0', 10);
+      if (idx < portraitFallbacks.length) {
+        imgEl.setAttribute('data-fallback-idx', String(idx + 1));
+        imgEl.src = portraitFallbacks[idx];
+      } else {
+        imgEl.onerror = null;
+      }
+    }
+
+    function previewLocalPhoto(event) {
+      const file = event.target && event.target.files && event.target.files[0];
+      if (!file) return;
+      const imgEl = document.getElementById('portrait-img');
+      if (imgEl) {
+        imgEl.onerror = null;
+        imgEl.src = URL.createObjectURL(file);
+        showToast('Portrait preview updated!');
+      }
+    }
+
+    // 3. Toast Notification & Clipboard Utility
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      const textEl = document.getElementById('toast-text');
+      if (!toast || !textEl) return;
+      textEl.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2800);
+    }
+
+    function copyToClipboard(text, message) {
+      try {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = text;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        showToast(message || 'Copied to clipboard');
+      } catch (err) {
+        showToast('Unable to copy automatically');
+      }
+    }
+
+    // 4. Interactive Mini-Shell Command Responses
+    const shellResponses = {
+      help: [
+        'Available commands: <span class="text-emerald-300">whoami</span>, <span class="text-emerald-300">projects</span>, <span class="text-emerald-300">skills</span>, <span class="text-emerald-300">cert</span>, <span class="text-amber-300">clear</span>'
+      ],
+      whoami: [
+        '<span class="text-emerald-300 font-semibold">Mohammad Daud</span> | Software &amp; Systems Engineer',
+        'Education: MCA Candidate @ Integral University (2028) | BCA @ IGNOU (2025)',
+        'Focus: Python Development, POSIX Systems Programming, Local LLM Inference &amp; CCNA Prep'
+      ],
+      projects: [
+        '[1] <span class="text-emerald-300 font-semibold">DaudGPT</span> — Local AI Chatbot (FastAPI + Ollama + Qwen2.5-Coder)',
+        '[2] <span class="text-amber-300 font-semibold">Custom Linux Shell</span> — C, fork(), exec(), I/O redirection & history',
+        '[3] <span class="text-sky-300 font-semibold">Python OOP 2D Arcade Game</span> — Encapsulated classes, game loop & collision'
+      ],
+      skills: [
+        'Languages : Python, C, C++ | Core CS: DSA, OOP (40+ LeetCode solved)',
+        'Databases : SQL, MySQL, PostgreSQL (Joins, Window Functions), Power BI',
+        'Systems   : Linux Admin, Bash, Git, GitHub, Docker, TCP/IP, DNS, CCNA Track'
+      ],
+      cert: [
+        'Workshop  : Generative AI & Agentic AI Workshop (Softpro India @ Integral Univ.)',
+        'Date      : 7 October 2026 | Credential ID: <span class="text-amber-300 font-semibold">SP-CERT-2026-00880</span>'
+      ]
+    };
+
+    function appendShellLine(htmlContent) {
+      const container = document.getElementById('shell-output');
+      if (!container) return;
+      const line = document.createElement('div');
+      line.innerHTML = htmlContent;
+      container.appendChild(line);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function runShellCommand(rawCmd) {
+      const cmd = (rawCmd || '').trim().toLowerCase();
+      if (!cmd) return;
+
+      if (cmd === 'clear') {
+        const container = document.getElementById('shell-output');
+        if (container) {
+          container.innerHTML = '<p class="text-emerald-400">Buffer cleared. Type <span class="text-amber-300 font-semibold">help</span> for available commands.</p>';
+        }
+        return;
+      }
+
+      appendShellLine(`<span class="text-emerald-400">daud@linux-shell:~$</span> <span class="text-white font-semibold">${cmd}</span>`);
+
+      if (shellResponses[cmd]) {
+        shellResponses[cmd].forEach((row) => appendShellLine(row));
+      } else {
+        appendShellLine(`<span class="text-rose-400">sh: command not found: ${cmd}</span>. Type <span class="text-amber-300">help</span> for valid commands.`);
+      }
+    }
+
+    function handleShellSubmit(event) {
+      event.preventDefault();
+      const input = document.getElementById('shell-input');
+      if (!input) return;
+      runShellCommand(input.value);
+      input.value = '';
+    }
+
+    // 6. Project Category Filtering
+    function filterProjectCards(category) {
+      document.querySelectorAll('.project-bento-card').forEach((card) => {
+        const cardCat = card.getAttribute('data-category');
+        if (category === 'all' || cardCat === category) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      document.querySelectorAll('.proj-tab').forEach((tab) => {
+        if (tab.getAttribute('data-cat') === category) {
+          tab.className = 'proj-tab px-3.5 py-2 rounded-xl bg-[#0F5132] text-white font-semibold transition cursor-pointer';
+        } else {
+          tab.className = 'proj-tab px-3.5 py-2 rounded-xl bg-white text-[#111315] border border-[#E4E2DC] hover:border-[#0F5132] transition cursor-pointer';
+        }
+      });
+    }
+
+    // 7. Architecture Inspector Modal Data & Controls
+    const projectArchitectures = {
+      daudgpt: {
+        category: 'AI & WEB ARCHITECTURE',
+        title: 'DaudGPT — Local AI Chatbot',
+        diagram: `[Responsive Web Client: HTML / CSS / JS]
+       │  (Conversation State, History & New-Chat Controls)
+       ▼
+[FastAPI Asynchronous Backend Server]
+       │  (Local HTTP Inference Bridge)
+       ▼
+[Ollama Local Runtime] ──► [Qwen2.5-Coder Model Weights]`,
+        decisions: [
+          'Executed LLM inference entirely on local hardware using Ollama and Qwen2.5-Coder to ensure complete conversation privacy.',
+          'Built a lightweight FastAPI service layer to handle prompt routing, session resets, and responsive message delivery.',
+          'Engineered a clean ChatGPT-style frontend in HTML, CSS, and JavaScript with persistent local chat history.'
+        ],
+        stack: ['Python', 'FastAPI', 'Ollama', 'Qwen2.5-Coder', 'HTML/CSS/JS']
+      },
+      shell: {
+        category: 'POSIX SYSTEMS ARCHITECTURE',
+        title: 'Custom Linux Shell',
+        diagram: `[Interactive Prompt: stdin]
+       │
+       ▼
+[Command Tokenizer & Redirection Parser (<, >)] ──► [History Buffer]
+       │
+       ▼
+[fork() Child Process] ──► [dup2() FD Redirection] ──► [exec() Binary]
+       │
+       ▼
+[waitpid() Parent Synchronization & Process Debug Logs]`,
+        decisions: [
+          'Implemented custom command tokenization to parse executable arguments and stdin/stdout redirection tokens.',
+          'Leveraged POSIX fork(), exec(), and waitpid() system calls for isolated child process creation and lifecycle control.',
+          'Added command history tracking and debugging diagnostics to inspect process execution on Linux.'
+        ],
+        stack: ['C', 'POSIX Syscalls', 'fork()', 'exec()', 'I/O Redirection']
+      },
+      game: {
+        category: 'OBJECT-ORIENTED PYTHON ARCHITECTURE',
+        title: 'Python OOP 2D Arcade Game',
+        diagram: `[GameController Loop]
+       │
+       ├──► [Event & Input Handler]
+       ├──► [Entity Manager: Player, Enemies, Projectiles (OOP Classes)]
+       ├──► [Bounding-Box Collision Engine]
+       └──► [Frame State Update & Score Renderer]`,
+        decisions: [
+          'Structured all arcade entities into modular, encapsulated Python classes with clear state responsibilities.',
+          'Separated frame rendering from physics/position updates inside a deterministic game loop.',
+          'Implemented real-time bounding-box collision detection for responsive arcade gameplay.'
+        ],
+        stack: ['Python', 'OOP Architecture', 'Game Loop', 'Collision Physics']
+      }
+    };
+
+    function openArchitectureModal(key) {
+      const data = projectArchitectures[key];
+      const modal = document.getElementById('arch-modal');
+      if (!data || !modal) return;
+
+      document.getElementById('modal-proj-category').textContent = data.category;
+      document.getElementById('modal-proj-title').textContent = data.title;
+      document.getElementById('modal-proj-diagram').textContent = data.diagram;
+
+      const decisionsList = document.getElementById('modal-proj-decisions');
+      decisionsList.innerHTML = data.decisions.map((item) => `<li>${item}</li>`).join('');
+
+      const stackContainer = document.getElementById('modal-proj-stack');
+      stackContainer.innerHTML = data.stack
+        .map((tag) => `<span class="px-2.5 py-1 rounded-md bg-[#F7F6F2] text-[#111315] border border-[#E4E2DC]">${tag}</span>`)
+        .join('');
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function closeArchitectureModal() {
+      const modal = document.getElementById('arch-modal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    // 8. Mobile Drawer Controls
+    function openMobileMenu() {
+      const drawer = document.getElementById('mobile-drawer');
+      const backdrop = document.getElementById('mobile-backdrop');
+      backdrop.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        drawer.classList.remove('translate-x-full');
+      });
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      const drawer = document.getElementById('mobile-drawer');
+      const backdrop = document.getElementById('mobile-backdrop');
+      drawer.classList.add('translate-x-full');
+      backdrop.classList.add('opacity-0');
+      setTimeout(() => backdrop.classList.add('hidden'), 300);
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeArchitectureModal();
+        closeMobileMenu();
+      }
+    });
+
+    // 9. Quick-Message Mailto Composer
+    function submitQuickMail(event) {
+      event.preventDefault();
+      const name = document.getElementById('sender-name').value.trim();
+      const subject = document.getElementById('sender-subject').value.trim();
+      const body = document.getElementById('sender-body').value.trim();
+      const fullBody = `Hello Mohammad Daud,\n\n${body}\n\nBest regards,\n${name}`;
+      window.location.href = `mailto:daud.knj@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullBody)}`;
+      showToast('Launching email client...');
+    }
+
+    function copyMailDraft() {
+      const name = document.getElementById('sender-name').value.trim() || 'Recruiter';
+      const subject = document.getElementById('sender-subject').value.trim() || 'Software Engineering Opportunity';
+      const body = document.getElementById('sender-body').value.trim() || 'Hi Mohammad, I reviewed your portfolio and would like to connect.';
+      const draft = `To: daud.knj@gmail.com\nSubject: ${subject}\n\nHello Mohammad Daud,\n\n${body}\n\nBest regards,\n${name}`;
+      copyToClipboard(draft, 'Draft copied to clipboard!');
+    }
+
+    // 10. Scroll Reveal Observer
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>
